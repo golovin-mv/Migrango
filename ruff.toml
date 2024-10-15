@@ -1,0 +1,17 @@
+select = [
+    "A",  # prevent using keywords that clobber python builtins
+    "B",  # bugbear: security warnings
+    "E",  # pycodestyle
+    "F",  # pyflakes
+    "ISC",  # implicit string concatenation
+    "UP",  # alert you when better syntax is available in your python version
+    "RUF",  # the ruff developer's own rules
+]
+
+line-length = 150
+
+[lint]
+extend-select = ["E501"]
+
+[lint.pydocstyle]
+convention = "google"
