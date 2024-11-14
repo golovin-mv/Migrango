@@ -12,9 +12,7 @@ class CreateConnectionCommand:
         username: str | None = None,
         password: str | None = None,
     ):
-        connection = Connection(
-            name=name, url=url, database=database, username=username, password=password
-        )
+        connection = Connection(name=name, url=url, database=database, username=username, password=password)
         connection.save()
         console = Console()
         console.print(f"[green]Connection [bold]{name}[/bold] created[/green]")

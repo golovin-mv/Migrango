@@ -10,9 +10,9 @@ class ExportManager:
         """
         Initialize the class instance.
 
-
-        :arg client (ArangoClient): The ArangoDB client object.
-        :arg migration_path (str): The path to the migrations directory.
+        Args:
+            client (ArangoClient): The ArangoDB client object.
+            migration_path (str): The path to the migrations directory.
         """
         self.client = client
         self.migration_path = migration_path
@@ -30,9 +30,7 @@ class ExportManager:
 
         for collection in self.client.get_all_collections():
             json_content = json.dumps(self.client.get_all_documents(collection["name"]))
-            self.__write_migration_file(
-                self.__generate_file_name(collection["name"]), json_content
-            )
+            self.__write_migration_file(self.__generate_file_name(collection["name"]), json_content)
             on_collection_exported()
 
     def __write_migration_file(self, file_name: str, json_content: str) -> None:

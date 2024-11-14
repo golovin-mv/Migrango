@@ -10,6 +10,4 @@ class ConnectionListCommand:
         connections = Connection.get_list()
 
         for connection in connections:
-            console.print(
-                f'[bold green]{connection["name"]}[/bold green] ([gray]{connection["url"]}[/gray])'
-            )
+            console.print(f'[bold green]{connection["name"]}[/bold green] ([gray]{connection["url"]}[/gray])')

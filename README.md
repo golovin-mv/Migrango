@@ -15,5 +15,5 @@ The program provides several commands such as `compare`, `connection`, `dump`, a
 
 For detailed information about available options and commands, run:
    ```bash
-  python main.py --help
+  python migrango.py --help
    ```

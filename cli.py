@@ -49,18 +49,14 @@ def remove_connection(name: str):
 @click.argument("database", required=False)
 @click.argument("username", required=False)
 @click.argument("password", required=False)
-def create_connection(
-    interactive: bool, name: str, url: str, database: str, username: str, password: str
-):
+def create_connection(interactive: bool, name: str, url: str, database: str, username: str, password: str):
     """Create connection."""
     if interactive:
         name = Prompt.ask(
             "[magenta]Connection name[/magenta]",
             default="local",
         )
-        url = Prompt.ask(
-            "[magenta]Database URL[/magenta]", default="http://localhost:8529"
-        )
+        url = Prompt.ask("[magenta]Database URL[/magenta]", default="http://localhost:8529")
         database = Prompt.ask("[magenta]Database name[/magenta]", default="_system")
         username = Prompt.ask("[magenta]Username name[/magenta]", default=None)
         password = Prompt.ask("[magenta]Password name[/magenta]", default=None)
@@ -100,9 +96,7 @@ def compare(
     details: bool,
 ):
     """Compare ArangoDB collections. Make migration files."""
-    CompareCommand.execute(
-        reference_connection, compared_connection, checksum_only, details
-    )
+    CompareCommand.execute(reference_connection, compared_connection, checksum_only, details)
 
 
 @cli.command(help="Dump all collection from the connection.")
@@ -129,9 +123,13 @@ def dump(output_dir: str, connection: str):
     default="./dump",
     help="Output directory.",
 )
+@click.option(
+    "-t",
+    "--template",
+    required=True,
+    help="Path to the Template to use for the migration files.",
+)
 @click.argument("reference_connection", required=True)
 @click.argument("compared_connection", required=True)
-def make_migrations(
-    output_dir: str, reference_connection: str, compared_connection: str
-):
-    MakeMigrationsCommand.execute(output_dir, reference_connection, compared_connection)
+def make_migrations(output_dir: str, reference_connection: str, compared_connection: str, template: str):
+    MakeMigrationsCommand.execute(output_dir, reference_connection, compared_connection, template)

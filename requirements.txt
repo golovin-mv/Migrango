@@ -4,7 +4,9 @@ click==8.1.7
 deepdiff==8.0.1
 idna==3.6
 importlib-metadata==7.0.1
+Jinja2==3.1.4
 markdown-it-py==3.0.0
+MarkupSafe==3.0.2
 mdurl==0.1.2
 orderly-set==5.2.2
 packaging==23.2

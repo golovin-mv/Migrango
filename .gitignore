@@ -321,3 +321,4 @@ pip-selfcheck.json
 .idea
 # app files
 _connection.json
+dump

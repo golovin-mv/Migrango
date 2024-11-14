@@ -36,33 +36,28 @@ class ArangoClient:
         self.__password = password
         self.__need_auth = need_auth
         self.__token = None
-        self.__db = ArangoDbClient(self.__url).db(
-            self.__database, username=self.__username, password=self.__password
-        )
+        self.__db = ArangoDbClient(self.__url).db(self.__database, username=self.__username, password=self.__password)
         self.logger = logging.getLogger("rich")
 
     @property
     def get_database(self):
         return self.__db
 
-    def compare_collections(
-        self, other, on_collection_compared: Callable[[], None]
-    ) -> list:
+    def compare_collections(self, other: ArangoClient, on_collection_compared: Callable[[], None]) -> list:
         """
         Compare the collections of this object with the collections of another object.
         Args:
-            other: Another object to compare collections with.
+            other (ArangoClient): Another object to compare collections with.
+            on_collection_compared (Callable): A callback function to be called for each collection compared.
         Returns:
-            True if the collections are equal, False otherwise.
+            booL: True if the collections are equal, False otherwise.
         """
         self_collections = self.get_all_collections()
         other_collections = other.get_all_collections()
 
         mismatches = []
         if len(self_collections) != len(other_collections):
-            self.logger.info(
-                f"Collection count mismatch. {len(self_collections)} != {len(other_collections)}"
-            )
+            self.logger.info(f"Collection count mismatch. {len(self_collections)} != {len(other_collections)}")
 
         for collection in self_collections:
             if collection["name"] == "migrations":
@@ -73,19 +68,17 @@ class ArangoClient:
                 with_data=True,
             )
 
-            other_checksum = other.__db.collection(collection["name"]).checksum(
-                with_rev=False, with_data=True
-            )
+            other_checksum = other.__db.collection(collection["name"]).checksum(with_rev=False, with_data=True)
 
             if self_checksum != other_checksum:
-                self.logger.debug(
-                    f'Collection {collection["name"]} checksum mismatch. {self_checksum} != {other_checksum}'
-                )
+                self.logger.debug(f'Collection {collection["name"]} checksum mismatch. {self_checksum} != {other_checksum}')
                 mismatches.append(collection)
 
             on_collection_compared()
 
-        return mismatches
+        collection_for_create_or_delete = self.__get_collections_for_remove_and_for_crete(other_collections, self_collections)
+
+        return [mismatches, collection_for_create_or_delete["create"], collection_for_create_or_delete["delete"]]
 
     def get_all_collections(self, sort_by_id: bool = True) -> list:
         """
@@ -153,6 +146,14 @@ class ArangoClient:
 
     def get_db(self) -> StandardDatabase:
         return self.__db
+
+    def __get_collections_for_remove_and_for_crete(
+        self, left_collections: list[dict[str, str]], right_collections: list[dict[str, str]]
+    ) -> dict[str, list[dict[str, str]]]:
+        return {
+            "create": [x for x in left_collections if not any(i["name"] == x["name"] and i["type"] == x["type"] for i in right_collections)],
+            "delete": [x for x in right_collections if not any(i["name"] == x["name"] and i["type"] == x["type"] for i in left_collections)],
+        }
 
     def __str__(self):
         return f"{self.__url}/{self.__database}"
